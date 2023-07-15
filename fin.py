@@ -1,9 +1,9 @@
 from dotenv import load_dotenv
-import tempfile
 import pandas as pd
 import streamlit as st
 from langchain.agents import create_pandas_dataframe_agent
 from langchain.llms import OpenAI
+import matplotlib
 
 
 def main():
@@ -18,33 +18,55 @@ def main():
     if inputcsv is not None:
 
         dataframe = pd.read_csv(inputcsv)
-        del dataframe["Memo"]
-        st.write(dataframe)
+        
 
         process_df(dataframe)
 
-        llm = OpenAI(temperature=0)
+
+        llm = OpenAI(temperature=0.7)
         agent = create_pandas_dataframe_agent(llm, dataframe, verbose = True)
 
-        qchoice1 = st.button("Show me a chart of my expenses")
+        qchoice1 = st.button("Expand transaction history")
         qchoice2 = st.button("Breakdown my spending by category")
         qchoice3 = st.button("Give feedback on my spending")
     
         if qchoice1:
-            st.write("📈1")
+            st.write(dataframe)
         if qchoice2:
             response = agent.run("Parse through the transactions in the dataframe and sum up all of the transactions and sort them into their respective spending categories and sort by highest amount spent to lowest.")
             st.write(response)
+        if qchoice3:
+            response = agent.run("Give detailed feedback on how I can improve my spending and what categories I should spend less money on. Do not look at the transaction counts but instead the total amounts spent on each category. Multiple sentences.")
+            st.write(response)
 
-
-def process_df(dataframe):
+def process_df(df):
 
     #this function removes the payments on the card and 
-    #deletes all unnecessary columns from the dataframe such as dates
+    df.drop(df[df['Type'] == "Payment"].index, inplace=True)
 
+    #multiplies amount column by -1
+    df.Amount *= -1
     
+    simpledf = df
 
-    return dataframe
+    simpledf = simpledf.drop('Transaction Date', axis=1)
+    simpledf = simpledf.drop('Post Date', axis=1)
+    simpledf = simpledf.drop('Description', axis=1)
+    simpledf = simpledf.drop('Type', axis=1)
+    simpledf = simpledf.drop('Memo', axis=1)
+
+    st.write(simpledf)
+
+    simpledict = simpledf.to_dict('index')
+
+    #{0: {'Category': 'Shopping', 'Amount': 12.92}, 1: {'Category': 'Shopping', 'Amount': 0.53},...}
+
+
+
+
+
+
+    return df
     
 
         
