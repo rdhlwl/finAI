@@ -57,10 +57,25 @@ def process_df(df):
 
     st.write(simpledf)
 
-    simpledict = simpledf.to_dict('index')
+    newdict = simpledf.to_dict('index')
 
     #{0: {'Category': 'Shopping', 'Amount': 12.92}, 1: {'Category': 'Shopping', 'Amount': 0.53},...}
 
+    simpledict = {}
+
+    for index in newdict:
+        nesteddict = newdict[index]
+        for key in nesteddict:
+            if key == "Category":
+                category = nesteddict[key] #ex. category = shopping
+                if category not in simpledict:
+                    simpledict[category] = 0 #amount defaults to 0 
+                simpledict[category] += nesteddict['Amount'] #aggregate all transactions into respective categories
+
+
+    #now we have {category:TotalAmount} pairs
+
+    st.write(simpledict)
 
 
 
