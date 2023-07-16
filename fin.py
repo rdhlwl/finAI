@@ -11,7 +11,7 @@ def main():
 
     load_dotenv()
 
-    st.set_page_config(page_title="Fin.AI", page_icon="🤖")
+    st.set_page_config(page_title="Fin.AI by @rdhlwl", page_icon="🤖")
     st.header("Fin.AI: Your AI-Powered Personal Finance Coach 💸")
 
     inputcsv = st.file_uploader("Upload your bank statement CSV", type = "csv")
@@ -28,16 +28,16 @@ def main():
         agent = create_pandas_dataframe_agent(llm, dataframe, verbose = True)
 
         qchoice1 = st.button("Expand transaction history")
-        qchoice2 = st.button("Breakdown my spending by category")
-        qchoice3 = st.button("Give feedback on my spending")
+        qchoice2 = st.button("Give feedback on my spending")
+        qchoice3 = st.button("Give tips for saving money")
     
         if qchoice1:
             st.write(dataframe)
         if qchoice2:
-            response = agent.run("Parse through the transactions in the dataframe and sum up all of the transactions and sort them into their respective spending categories and sort by highest amount spent to lowest.")
+            response = agent.run("Analyze the transactions in the data. Give a 8 sentence response on how the user should cutback on spending in the user's highest spent categories and specific examples of what exactly the user can do to save money in the user's highest spent category. ")
             st.write(response)
         if qchoice3:
-            response = agent.run("Give detailed feedback on how I can improve my spending and what categories I should spend less money on. Do not look at the transaction counts but instead the total amounts spent on each category. Multiple sentences.")
+            response = agent.run("Give the user a 8 sentence response on budgeting tips the user should use following budgeting strategies and rules to save money for the long run. Be specific about how these budgeting strategies work.")
             st.write(response)
 
 def process_df(df):
@@ -84,6 +84,7 @@ def process_df(df):
     #displaying sum of transactions by category in dataframe
     sumdf = pd.DataFrame.from_dict(sortedsimplelist)
     rows = st.columns(2)
+    sumdf = sumdf.rename(columns={0: "Category", 1: "Amount"})
 
     rows[0].write(simpledf)
     rows[1].write(sumdf)
@@ -121,14 +122,9 @@ def process_df(df):
     image = Image.open('my_plot.png')
     st.image(image)
 
-    
-
-
-
 
     return df
     
-        
 
 
 
