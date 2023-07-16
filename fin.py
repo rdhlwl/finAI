@@ -3,7 +3,8 @@ import pandas as pd
 import streamlit as st
 from langchain.agents import create_pandas_dataframe_agent
 from langchain.llms import OpenAI
-import matplotlib
+import matplotlib.pyplot as plt
+from PIL import Image
 
 
 def main():
@@ -55,7 +56,7 @@ def process_df(df):
     simpledf = simpledf.drop('Type', axis=1)
     simpledf = simpledf.drop('Memo', axis=1)
 
-    st.write(simpledf)
+    
 
     newdict = simpledf.to_dict('index')
 
@@ -75,15 +76,58 @@ def process_df(df):
 
     #now we have {category:TotalAmount} pairs
 
-    st.write(simpledict)
 
+    #to make bar chart
+    sortedsimplelist = sorted(simpledict.items(), key=lambda x:x[1], reverse=True)
+    converted_dict = dict(sortedsimplelist)
+
+    #displaying sum of transactions by category in dataframe
+    sumdf = pd.DataFrame.from_dict(sortedsimplelist)
+    rows = st.columns(2)
+
+    rows[0].write(simpledf)
+    rows[1].write(sumdf)
+
+    categories = list(converted_dict.keys())
+    amounts = list(converted_dict.values())
+    bars = plt.bar(range(len(converted_dict)), amounts, tick_label=categories)
+    st.set_option('deprecation.showPyplotGlobalUse', False) #remove warning
+    plt.title("Your spending in categories")
+    ax = plt.gca()
+    ax.tick_params(axis='x', labelrotation = 80)
+    bars[0].set_color("red")
+    bars[1].set_color("orange")
+    bars[2].set_color("yellow")
+    bars[3].set_color("green")
+    bars[4].set_color("blue")
+    bars[5].set_color("purple")
+    bars[6].set_color("violet")
+    bars[7].set_color("red")
+    bars[8].set_color("orange")
+    bars[9].set_color("yellow")
+    bars[10].set_color("green")
+    bars[11].set_color("blue")
+    bars[12].set_color("purple")
+    plt.xlabel("Categories")
+    plt.ylabel("Amount ($)")
+    COLOR = 'white'
+    plt.rcParams['text.color'] = COLOR
+    plt.rcParams['axes.labelcolor'] = COLOR
+    plt.rcParams['xtick.color'] = COLOR
+    plt.rcParams['ytick.color'] = COLOR
+    plt.subplots_adjust(bottom=0.4)
+    plt.savefig('my_plot.png', transparent=True)
+    
+    image = Image.open('my_plot.png')
+    st.image(image)
+
+    
 
 
 
 
     return df
     
-
         
 
 
