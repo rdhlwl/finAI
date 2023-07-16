@@ -4,6 +4,12 @@ Fin.AI is a program that takes your .CSV of your card transactions and gives you
 
 Fin.AI uses a LangChain agent to interface with the LLM and generate the transaction feedback as well as the budgeting tips. For the charts and data I used matplotlib and pandas. For the UI I used streamlit.
 
+![Alt Text](https://github.com/rdhlwl/finAI/blob/main/demo.gif)
+
+![Alt Text](https://github.com/rdhlwl/finAI/blob/main/feedback.png)
+
+![Alt Text](https://github.com/rdhlwl/finAI/blob/main/budgeting.png)
+
 
 
 
